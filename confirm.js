@@ -149,7 +149,7 @@ function unselectCandidate() {
 
 // Go to home
 function goToHome() {
-    window.location.href = "voting_sys.html";
+    window.location.href = "index.html";
 }
 
 window.confirmVote = confirmVote;
