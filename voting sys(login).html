@@ -1,0 +1,112 @@
+<!--voting system(student login)-->
+
+<!doctype html>
+<html>
+
+<head>
+    <title>Voting System</title>
+    <link rel="stylesheet" href="votecss.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+</head>
+
+<body background="voting back.jpeg">
+    <header class="headerclass">
+             <i class="fa-solid fa-graduation-cap"></i>
+        <h3>COLLEGE VOTING SYSTEM<br>
+            <p>Your Vote.Your Voice .Your Future</p>
+        </h3>
+
+        <nav class="nav1">
+            <a href="voting_sys.html">Home</a>
+            <a href="voting sys(about).html">About</a>
+            <a href="voting sys(works).html">How it Works</a>
+            <a href="voting sys(candidates).html">Candidates</a>
+            <a href="voting sys(contact).html">Contact</a>
+
+
+        </nav>
+    </header>
+
+    <section class="loginsection">
+
+        <div class="login">
+            <h2>Login to Vote</h2>
+            <p>Enter your college details to continue.</p>
+            <form id="loginForm">
+                <label>Name</label>
+                <input type="text" id="studentName" placeholder="Enter your name">
+                <label>register Number</label>
+                <input type="text" id="regNo" placeholder="Enter your register number">
+                <label>College Email ID</label>
+                <input type="email" id="email" placeholder="Enter your college email id">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+
+                <button type="submit">continue</button>
+            </form>
+        </div>
+
+    </section>
+    <footer class="footerclass">
+        <p>@ 2026 College Voting System.All Rights Reserved.</p>
+        <nav class="nav2">
+            <a href="voting sys.html">Home</a> |
+            <a href="voting sys(about).html">About</a> |
+            <a href="voting sys(works).html">How it Works</a> |
+            <a href="voting sys(contact).html">Contact</a>
+        </nav>
+
+    </footer>
+
+    <script type="module">
+        import { auth, db } from "./firebase.js";
+        import {
+            signInWithEmailAndPassword
+        } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+        import {
+            doc, getDoc
+        } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+
+        const loginForm = document.getElementById("loginForm");
+
+        loginForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const name = document.getElementById("studentName").value.trim();
+            const regNo = document.getElementById("regNo").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            console.log("Password length:", password.length);
+
+            try {
+                const result = await signInWithEmailAndPassword(
+                    auth, email, password
+                );
+
+                const studentRef = doc(db, "students", regNo);
+                const studentSnap = await getDoc(studentRef);
+
+                if (
+                    !studentSnap.exists() ||
+                    studentSnap.data().email !== email ||
+                    studentSnap.data().name !== name
+                ) {
+                    alert("Invalid student details. Please check again.");
+                    return;
+                }
+
+                alert("Login successful!");
+                window.location.href =
+                    "voting%20sys(candidates).html?regNo=" + encodeURIComponent(regNo);
+
+            } catch (error) {
+                console.error(error);
+                alert("Login failed. Check your email and password.");
+            }
+        });
+    </script>
+
+
+</body>
+
+</html>

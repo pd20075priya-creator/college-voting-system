@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="votecss.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+</head>
+
+<body>
+ <header class="headerclass">
+             <i class="fa-solid fa-graduation-cap"></i>
+        <h3>COLLEGE VOTING SYSTEM<br>
+            <p>Your Vote.Your Voice .Your Future</p>
+        </h3>
+
+        <nav class="nav1">
+            <a href="voting_sys.html">Home</a>
+            <a href="voting sys(admin-login).html">Admin Login</a>
+          
+        </nav>
+
+    </header>
+
+    <div class="admin-login-card">
+        <h2>Admin Login</h2>
+
+        <form id="adminLoginForm">
+            <label>Email:</label>
+            <input type="email" id="adminEmail" required>
+
+            <label>Password:</label>
+            <input type="password" id="adminPassword" required>
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { auth, db } from "./firebase.js";
+
+        import {
+            signInWithEmailAndPassword,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+
+        import {
+            doc,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+
+        document.getElementById("adminLoginForm")
+            .addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const email = document.getElementById("adminEmail").value.trim();
+                const password = document.getElementById("adminPassword").value;
+
+                try {
+                    const result = await signInWithEmailAndPassword(
+                        auth, email, password
+                    );
+
+                    const adminRef = doc(db, "admin", result.user.uid);
+                    const adminSnap = await getDoc(adminRef);
+
+                    if (!adminSnap.exists() || adminSnap.data().role !== "admin") {
+                        await signOut(auth);
+                        alert("Access denied. Admin account only.");
+                        return;
+                    }
+
+                    alert("Admin login successful!");
+                    window.location.href = "voting sys(admin).html";
+
+                } catch (error) {
+                    console.error(error);
+                    alert("Login failed. Check your email and password.");
+                }
+            });
+    </script>
+
+</body>
+
+</html>

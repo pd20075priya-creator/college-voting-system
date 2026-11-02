@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="votecss.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+        integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+</head>
+
+<body>
+
+    <header class="headerclass">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <h3>COLLEGE VOTING SYSTEM<br>
+            <p>Admin Dashboard</p>
+        </h3>
+
+
+
+
+        <div>
+            <button class="canbuttonn" onclick="openmenu()">OpenMenu</button>
+        </div>
+    </header>
+    <section>
+        <div class="sidebar">
+            <a href="voting_sys.html">Home</a>
+            <a href="voting sys(admin-login).html">Admin Login</a>
+            <a href="#dashboard-overview">Dashboard</a><br>
+            <a href="#candidate-results">Candidate Results</a><br>
+            <a href="#student-details">Student Details</a><br>
+            <a href="#election-management">Election Management</a><br>
+            <a href="#admin-profile">Admin Profile/Logout</a><br><br>
+
+            <button class="canbuttonn" onclick="closemenu()">CloseMenu</button>
+
+
+        </div>
+    </section>
+    <section id="dashboard-overview" class="dashboard">
+        <h2>Summary Cards</h2>
+        <section class="summarycards">
+
+            <div class="dcard1">
+                <h3>Total Students</h3>
+                <p id="totalstudents">0</p>
+            </div>
+            <div class="dcard1">
+                <h3>Total Votes</h3>
+                <p id="totalvotes">0</p>
+            </div>
+            <div class="dcard1">
+                <h3>Not Voted</h3>
+                <p id="notvoted">0</p>
+            </div>
+            <div class="dcard1">
+                <h3>Voting Percentage</h3>
+                <p id="votingpercentage">0%</p>
+            </div>
+        </section>
+
+        <section class="election-status">
+            <h2>Election Status</h2>
+            <h4>Election Status :<span>Active</span></h4>
+            <h4>Election Date :<span>To be announced</span></h4>
+            <h4>Election Name :<span>College Election 2026</span></h4>
+        </section>
+        <section class="voting-progress">
+            <h2>Voting Progress</h2>
+            <p>75 out of 100 students voted</p>
+            <progress value="75" max="100"></progress>
+            <p>75% completed</p>
+        </section>
+
+    </section>
+    <h2>Candidate Results</h2>
+    <section id="candidate-results" class="resultcards">
+
+        <div class="result-cards">
+            <h3>Ananya</h3>
+            <p>President</p>
+            <p class="vote-count" id="ananyaVotes">0 Votes</p>
+        </div>
+        <div class="result-cards">
+            <h3>Sameer</h3>
+            <p>Secretary</p>
+            <p class="vote-count" id="sameerVotes">0 Votes</p>
+        </div>
+        <div class="result-cards">
+            <h3>Maya</h3>
+            <p>Treasurer</p>
+            <p class="vote-count" id="mayaVotes">0 Votes</p>
+        </div>
+    </section>
+    <section id="student-details">
+        <h2>Student Details</h2>
+        <table class="student-table">
+            <thead>
+                <tr>
+                    <th>Register No</th>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Voting Status</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody">
+                <tr>
+                    <td colspan="4">Loading student details</td>
+
+                </tr>
+            </tbody>
+
+        </table>
+
+    </section>
+    <section id="election-management">
+        <h2>College Election 2026</h2>
+        <div class="management-card">
+
+            <p>Election Status:<span id="status">Active</span></p>
+            <p>Election Date:To be announced</p>
+            <button onclick="startElection()">Start Election</button>
+            <button onclick="endElection()">End Election</button>
+        </div>
+
+    </section>
+    <section id="admin-profile">
+        <h2>Admin Profile</h2>
+        <div class="admin-card">
+            <h3>Administrator</h3>
+            <p>Role:Election Administrator</p>
+            <p>Email:admin@sastra.ac.in</p>
+            <button onclick="adminLogout()">Logout</button>
+        </div>
+
+    </section>
+    <script>
+        function openmenu() {
+            document.querySelector(".sidebar").style.left = "0";
+        }
+
+        function closemenu() {
+            document.querySelector(".sidebar").style.left = "-250px";
+        }
+    </script>
+    <script type="module">
+        import { auth, db } from "./firebase.js";
+        import { onAuthStateChanged, signOut } from
+            "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+        import { doc, getDoc, updateDoc } from
+            "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "voting%20sys(admin-login).html";
+                return;
+            }
+
+            try {
+                const adminRef = doc(db, "admin", user.uid);
+                const adminSnap = await getDoc(adminRef);
+
+                if (!adminSnap.exists() || adminSnap.data().role !== "admin") {
+                    await signOut(auth);
+                    alert("Access denied. Admin only.");
+                    window.location.href = "voting%20sys(admin-login).html";
+                }
+            } catch (error) {
+                console.error(error);
+                await signOut(auth);
+                alert("Unable to verify admin access.");
+                window.location.href = "voting%20sys(admin-login).html";
+            }
+        });
+        async function verifyAdmin() {
+            const user = auth.currentUser;
+            if (!user) {
+                alert("Please login as admin");
+                return false;
+
+            }
+            const adminRef = doc(db, "admin", user.uid);
+            const adminSnap = await getDoc(adminRef);
+            return adminSnap.exists() && adminSnap.data().role === "admin";
+        }
+        // Start Election
+        window.startElection = async function () {
+            if (!await verifyAdmin()) {
+                alert("Admin access required");
+                return;
+            }
+            const confirmStart = confirm("Are you sure you want to start the election?");
+
+            if (!confirmStart) return;
+
+            try {
+                const electionRef = doc(db, "election", "current");
+
+                await updateDoc(electionRef, {
+                    status: "active"
+                });
+
+                document.getElementById("status").textContent = "Active";
+
+                alert("Election started successfully!");
+
+            } catch (error) {
+                console.error(error);
+                alert("Unable to start election.");
+            }
+        };
+
+
+        // End Election
+        window.endElection = async function () {
+            if (!await verifyAdmin()) {
+                alert("Admin access required");
+                return;
+            }
+            const confirmEnd = confirm("Are you sure you want to end the election?");
+
+            if (!confirmEnd) return;
+
+            try {
+                const electionRef = doc(db, "election", "current");
+
+                await updateDoc(electionRef, {
+                    status: "ended"
+                });
+
+                document.getElementById("status").textContent = "Ended";
+
+                alert("Election ended successfully!");
+
+            } catch (error) {
+                console.error(error);
+                alert("Unable to end election.");
+            }
+        };
+
+    </script>
+    <script type="module">
+        import { auth, db } from "./firebase.js";
+
+        import {
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+
+        import {
+            collection,
+            getDocs,
+            doc,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+        window.adminLogout = async function () {
+            try {
+                await signOut(auth);
+                alert("Admin logged out successfully!");
+
+                window.location.href = "voting%20sys(admin-login).html";
+
+            } catch (error) {
+                console.error(error);
+                alert("Logout failed. Please try again.");
+            }
+        };
+
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
+
+            try {
+                // Verify admin
+                const adminRef = doc(db, "admin", user.uid);
+                const adminSnap = await getDoc(adminRef);
+
+                if (!adminSnap.exists() || adminSnap.data().role !== "admin") {
+                    return;
+                }
+
+                // Get student records
+                const studentsRef = collection(db, "students");
+                const studentsSnap = await getDocs(studentsRef);
+
+                const tableBody = document.getElementById("studentTableBody");
+
+                tableBody.innerHTML = "";
+                let totalStudents = 0;
+                let totalVotes = 0;
+                let ananyaCount = 0;
+                let sameerCount = 0;
+                let mayaCount = 0;
+
+
+                if (studentsSnap.empty) {
+                    tableBody.innerHTML =
+                        "<tr><td colspan='4'>No students found</td></tr>";
+                    return;
+                }
+
+                studentsSnap.forEach((studentDoc) => {
+                    const student = studentDoc.data();
+                    totalStudents++;
+                    if (student.hasVoted === true) {
+                        totalVotes++;
+                        if (student.selectedCandidate === "ananya") {
+                            ananyaCount++;
+                        }
+                        else if (student.selectedCandidate === "sameer") {
+                            sameerCount++;
+                        }
+                        else if (student.selectedCandidate === "maya") {
+                            mayaCount++;
+
+                        }
+                    }
+
+
+                    const row = document.createElement("tr");
+
+                    const values = [
+                        studentDoc.id,
+                        student.name || "-",
+                        student.email || "-",
+                        student.hasVoted ? "Voted" : "Not Voted"
+                    ];
+
+                    values.forEach(value => {
+                        const cell = document.createElement("td");
+                        cell.textContent = value;
+                        row.appendChild(cell);
+                    });
+
+                    tableBody.appendChild(row);
+                });
+                document.getElementById("ananyaVotes").textContent = ananyaCount + "Votes";
+                document.getElementById("sameerVotes").textContent = sameerCount + "Votes";
+                document.getElementById("mayaVotes").textContent = mayaCount + "Votes";
+
+
+                const notVoted = totalStudents - totalVotes;
+
+                const percentage = totalStudents === 0
+                    ? 0
+                    : Math.round((totalVotes / totalStudents) * 100);
+
+                document.getElementById("totalstudents").textContent = totalStudents;
+                document.getElementById("totalvotes").textContent = totalVotes;
+                document.getElementById("notvoted").textContent = notVoted;
+                document.getElementById("votingpercentage").textContent = percentage + "%";
+            } catch (error) {
+                console.error("Student data error:", error);
+                document.getElementById("studentTableBody").innerHTML = "<tr><td colspan='4'>Unable to load student details</td></tr>";
+            }
+        });
+    </script>
+</body>
+
+</html>

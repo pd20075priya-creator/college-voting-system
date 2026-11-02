@@ -1,0 +1,94 @@
+<!--confirmvote(voting system)-->
+
+<!doctype html>
+<html>
+
+<head>
+    <title>Voting System</title>
+    <link rel="stylesheet" href="votecss.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+ 
+</head>
+
+<body>
+    <header class="headerclass">
+             <i class="fa-solid fa-graduation-cap"></i>
+        <h3>COLLEGE VOTING SYSTEM<br>
+            <p>Your Vote.Your Voice .Your Future</p>
+        </h3>
+
+        <nav class="nav1">
+            <a href="voting_sys.html">Home</a>
+            <a href="voting sys(about).html">About</a>
+            <a href="voting sys(works).html">How it Works</a>
+            <a href="voting sys(candidates).html">Candidates</a>
+            <a href="voting sys(contact).html">Contact</a>
+
+
+        </nav>
+
+    </header>
+
+
+    <main class="confirmation-page">
+
+        <h1>Confirm Your Selection</h1>
+
+        <p>Please check the candidate details before confirming your vote.</p>
+
+
+        <div class="confirmation-card">
+
+            <img id="candidateImage" src="" alt="Candidate Photo">
+
+            <h2 id="candidateName"></h2>
+
+            <h3 id="candidatePosition"></h3>
+
+            <p id="candidateMessage"></p>
+
+
+            <div class="confirmation-buttons">
+
+                <button onclick="confirmVote()" id="confirmBtn">
+                    Confirm Vote
+                </button>
+
+                <button onclick="unselectCandidate()" id="unselectBtn">
+                    Unselect
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div id="successMessage" class="success-message">
+
+            <h2>Vote Confirmed!</h2>
+
+            <p>Your selection has been confirmed successfully.</p>
+
+            <button onclick="goToHome()" style="background-color: rgb(80, 80, 153);;color: aliceblue;">
+                Go to Home
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <footer class="footerclass">
+        <p>@ 2026 College Voting System.All Rights Reserved.</p>
+        <nav class="nav2">
+            <a href="voting sys.html">Home</a> |
+            <a href="voting sys(about).html">About</a> |
+            <a href="voting sys(works).html">How it Works</a> |
+            <a href="voting sys(contact).html">Contact</a>
+        </nav>
+
+    </footer>
+       <script type="module" src="confirm.js"></script>
+</body>
+
+</html>
